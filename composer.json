@@ -1,0 +1,15 @@
+{
+	"description":	"Cadastro de Salas",
+	"require":	{
+		"php": ">= 5.3.3",
+		"silex/silex": "~1.1",
+		"doctrine/dbal": "*",
+		"doctrine/orm": "*",
+		"twig/twig": "~1.0"		
+	},
+	"autoload": {
+		"psr-0": {
+			"Financeiro": "src/"
+		}
+	}
+}
