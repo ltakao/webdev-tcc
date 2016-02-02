@@ -41,7 +41,7 @@ class Usuario extends Entidade
 	protected $senha;
 
 	/**
-	 * @ORM\Column(type="integer")
+	 * @ORM\Column(type="integer", nullable=false)
 	 *
 	 * @var integer
 	 */

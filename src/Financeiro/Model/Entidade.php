@@ -4,7 +4,9 @@ namespace Financeiro\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/** @ORM\MappedSuperclass */
+/** 
+ * @ORM\MappedSuperclass
+ */
 abstract class Entidade 
 {
 	/**
