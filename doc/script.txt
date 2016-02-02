@@ -1,12 +1,14 @@
-CREATE  TABLE IF NOT EXISTS `financeiro`.`USUARIO` (
-  `idUSUARIO` INT NOT NULL ,
-  `Nome` VARCHAR(100) NOT NULL ,
-  `Login` VARCHAR(45) NOT NULL ,
-  `Senha` VARCHAR(20) NOT NULL ,
-  `Administrador` INT NOT NULL COMMENT '0 - Não | 1 - Sim' ,
-  `DataCadastro` DATETIME NOT NULL ,
-  `DataAlteracao` DATETIME NOT NULL ,
-  PRIMARY KEY (`idUSUARIO`) )
+CREATE TABLE IF NOT EXISTS `financeiro`.`USUARIO` (
+  `idUsuario` INT NOT NULL,
+  `Nome` VARCHAR(100) NOT NULL,
+  `Login` VARCHAR(45) NOT NULL,
+  `Senha` VARCHAR(20) NOT NULL,
+  `Administrador` INT NOT NULL COMMENT '0 - Não | 1 - Sim',
+  `DataCadastro` DATETIME NOT NULL,
+  `DataAlteracao` DATETIME NOT NULL,
+  `idUsuarioCadastro` INT NOT NULL,
+  `idUsuarioAlteracao` INT NOT NULL,
+  PRIMARY KEY (`idUsuario`))
 ENGINE = InnoDB;
 
 
@@ -38,7 +40,7 @@ CREATE  TABLE IF NOT EXISTS `financeiro`.`CLIFOR` (
   `DataAlteracao` DATETIME NOT NULL ,
   `idUsuarioCadastro` INT NOT NULL ,
   `idUsuarioAlteracao` INT NOT NULL ,
-  PRIMARY KEY (`idCliFor`, `idUsuarioCadastro`, `idUsuarioAlteracao`) )
+  PRIMARY KEY (`idCliFor`))
 ENGINE = InnoDB;
 
 
