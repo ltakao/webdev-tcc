@@ -1,0 +1,210 @@
+CREATE  TABLE IF NOT EXISTS `financeiro`.`USUARIO` (
+  `idUSUARIO` INT NOT NULL ,
+  `Nome` VARCHAR(100) NOT NULL ,
+  `Login` VARCHAR(45) NOT NULL ,
+  `Senha` VARCHAR(20) NOT NULL ,
+  `Administrador` INT NOT NULL COMMENT '0 - Não | 1 - Sim' ,
+  `DataCadastro` DATETIME NOT NULL ,
+  `DataAlteracao` DATETIME NOT NULL ,
+  PRIMARY KEY (`idUSUARIO`) )
+ENGINE = InnoDB;
+
+
+CREATE  TABLE IF NOT EXISTS `financeiro`.`CLIFOR` (
+  `idCliFor` INT NOT NULL ,
+  `Nome` VARCHAR(100) NOT NULL ,
+  `RazacoSocial` VARCHAR(100) NULL ,
+  `Tipo` VARCHAR(1) NOT NULL COMMENT 'C - CLIENTE | F - FORNECEDOR | A - CLIENTE e FORNECEDOR ' ,
+  `Pessoa` VARCHAR(1) NOT NULL COMMENT 'F - FÍSICA | J - JURIDÍCA' ,
+  `Cpf` VARCHAR(20) NULL ,
+  `Rg` VARCHAR(15) NULL ,
+  `Cnpj` VARCHAR(20) NULL ,
+  `Ie` VARCHAR(20) NULL ,
+  `Telefone1` VARCHAR(20) NULL ,
+  `Telefone2` VARCHAR(20) NULL ,
+  `Fax` VARCHAR(20) NULL ,
+  `Observacao` VARCHAR(200) NULL ,
+  `Email` VARCHAR(100) NULL ,
+  `Site` VARCHAR(100) NULL ,
+  `Logradouro` VARCHAR(100) NULL ,
+  `Numero` VARCHAR(10) NULL ,
+  `Complemento` VARCHAR(20) NULL ,
+  `Bairro` VARCHAR(100) NULL ,
+  `Cep` VARCHAR(8) NULL ,
+  `Cidade` VARCHAR(100) NULL ,
+  `Uf` VARCHAR(2) NULL ,
+  `Ativo` INT NOT NULL COMMENT '0 - Não | 1 - Sim' ,
+  `DataCadastro` DATETIME NOT NULL ,
+  `DataAlteracao` DATETIME NOT NULL ,
+  `idUsuarioCadastro` INT NOT NULL ,
+  `idUsuarioAlteracao` INT NOT NULL ,
+  PRIMARY KEY (`idCliFor`, `idUsuarioCadastro`, `idUsuarioAlteracao`) )
+ENGINE = InnoDB;
+
+
+CREATE  TABLE IF NOT EXISTS `financeiro`.`BANCO` (
+  `idBanco` INT NOT NULL ,
+  `Codigo` VARCHAR(5) NOT NULL ,
+  `Nome` VARCHAR(100) NOT NULL ,
+  `DataCadastro` DATETIME NOT NULL ,
+  `DataAlteracao` DATETIME NOT NULL ,
+  `idUsuarioCadastro` INT NOT NULL ,
+  `idUsuarioAlteracao` INT NOT NULL ,
+  PRIMARY KEY (`idBanco`, `idUsuarioCadastro`, `idUsuarioAlteracao`) )
+ENGINE = InnoDB;
+
+
+CREATE  TABLE IF NOT EXISTS `financeiro`.`AGENCIA` (
+  `idAgencia` INT NOT NULL ,
+  `idBanco` INT NOT NULL ,
+  `Agencia` VARCHAR(10) NULL ,
+  `Digito` VARCHAR(2) NULL ,
+  `DataCadastro` TIMESTAMP NOT NULL ,
+  `DataAlteracao` TIMESTAMP NOT NULL ,
+  `idUsuarioCadastro` INT NOT NULL ,
+  `idUsuarioAlteracao` INT NOT NULL ,
+  PRIMARY KEY (`idAgencia`, `idBanco`, `idUsuarioCadastro`, `idUsuarioAlteracao`) ,
+  INDEX `fk_AGENCIA_BANCO1_idx` (`idBanco` ASC) ,
+  CONSTRAINT `fk_AGENCIA_BANCO1`
+    FOREIGN KEY (`idBanco` )
+    REFERENCES `financeiro`.`BANCO` (`idBanco` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+CREATE  TABLE IF NOT EXISTS `financeiro`.`CONTA` (
+  `idConta` INT NOT NULL ,
+  `idAgencia` INT NULL ,
+  `Tipo` CHAR(1) NULL COMMENT 'C - CAIXA / B - BANCÁRIA' ,
+  `Descricao` VARCHAR(60) NULL ,
+  `Conta` VARCHAR(10) NULL ,
+  `Digito` VARCHAR(2) NULL ,
+  `Saldo` DECIMAL(12,2) NULL ,
+  `Limite` DECIMAL(12,2) NULL ,
+  `Observacao` VARCHAR(100) NULL ,
+  `DataCadastro` TIMESTAMP NOT NULL ,
+  `DataAlteracao` TIMESTAMP NOT NULL ,
+  `idUsuarioCadastro` INT NOT NULL ,
+  `idUsuarioAlteracao` INT NOT NULL ,
+  PRIMARY KEY (`idConta`, `idAgencia`, `idUsuarioCadastro`, `idUsuarioAlteracao`) ,
+  INDEX `fk_FCONTA_FAGENCIA1` (`idAgencia` ASC) ,
+  CONSTRAINT `fk_FCONTA_FAGENCIA1`
+    FOREIGN KEY (`idAgencia` )
+    REFERENCES `financeiro`.`AGENCIA` (`idAgencia` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+CREATE  TABLE IF NOT EXISTS `financeiro`.`FINANCEIRO` (
+  `idFinanceiro` INT NOT NULL ,
+  `idCliFor` INT NOT NULL ,
+  `Operacao` CHAR(1) NULL COMMENT 'P- PAGAMENTO  |  R- RECEBIMENTO' ,
+  `Valor` DECIMAL(12,2) NULL ,
+  `ValorPago` DECIMAL(12,2) NULL ,
+  `ValorMulta` DECIMAL(12,2) NULL ,
+  `ValorDesconto` DECIMAL(12,2) NULL ,
+  `ValorAcrescimo` DECIMAL(12,2) NULL ,
+  `ValorMora` DECIMAL(12,2) NULL ,
+  `ValorTotal` DECIMAL(12,2) NULL ,
+  `DataVencimento` DATE NULL ,
+  `Documento` VARCHAR(20) NULL ,
+  `Observacao` VARCHAR(200) NULL ,
+  `Status` CHAR(1) NULL COMMENT 'A- ABERTO | B- BAIXADO | P- BAIXA PARCIAL | C- CANCELADO ' ,
+  `Previsacao` INT NULL COMMENT '1- SIM  | 0- N- NÃO' ,
+  `DataCadastro` DATETIME NOT NULL ,
+  `DataAlteracao` DATETIME NOT NULL ,
+  `idUsuarioCadastro` INT NOT NULL ,
+  `idUsuarioAlteracao` INT NOT NULL ,
+  PRIMARY KEY (`idFinanceiro`, `idCliFor`, `idUsuarioCadastro`, `idUsuarioAlteracao`) ,
+  INDEX `fk_FFINANCEIRO_GCLIFOR1` (`idCliFor` ASC) ,
+  CONSTRAINT `fk_FFINANCEIRO_GCLIFOR1`
+    FOREIGN KEY (`idCliFor` )
+    REFERENCES `financeiro`.`CLIFOR` (`idCliFor` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+CREATE  TABLE IF NOT EXISTS `financeiro`.`TIPOBAIXA` (
+  `idTipoBaixa` INT NOT NULL ,
+  `Descricao` VARCHAR(100) NULL ,
+  `Tipo` VARCHAR(2) NULL COMMENT 'DI- Dinheiro\nCC- Cartão de Crédito \nCH- Cheque\nDC- Débito em Conta Corrente\nDD- DDA - Débito Direto Autorizado\nDE- Depósito\nDO- DOC - Documento de Ordem de Crédito\nTE- TED - Transferência Eletrônica Disponível\nTB- Transferência Bancária' ,
+  `Ativo` INT NULL COMMENT '0 - Não | 1 - Sim' ,
+  `DataCadastro` TIMESTAMP NOT NULL ,
+  `DataAlteracao` TIMESTAMP NOT NULL ,
+  `idUsuarioCadastro` INT NOT NULL ,
+  `idUsuarioAlteracao` INT NOT NULL ,
+  PRIMARY KEY (`idTipoBaixa`, `idUsuarioAlteracao`, `idUsuarioCadastro`) ,
+  UNIQUE INDEX `ATIVO_UNIQUE` (`Ativo` ASC) )
+ENGINE = InnoDB;
+
+
+CREATE  TABLE IF NOT EXISTS `financeiro`.`BAIXA` (
+  `idBaixa` INT NOT NULL ,
+  `idFinanceiro` INT NOT NULL ,
+  `idConta` INT NOT NULL ,
+  `idTipoBaixa` INT NOT NULL ,
+  `Valor` DECIMAL(12,2) NULL ,
+  `Operacao` CHAR(1) NULL COMMENT 'R- Recebimento | P- Pagamento' ,
+  `Status` CHAR(1) NULL COMMENT 'B- BAIXADO |  E- ESTORNADO' ,
+  `DataPagamento` TIMESTAMP NOT NULL ,
+  `DataCadastro` DATETIME NOT NULL ,
+  `DataAlteracao` DATETIME NULL ,
+  `idUsuarioCadastro` INT NOT NULL ,
+  `idUsuarioAlteracao` INT NOT NULL ,
+  PRIMARY KEY (`idBaixa`, `idFinanceiro`, `idConta`, `idTipoBaixa`, `idUsuarioCadastro`, `idUsuarioAlteracao`) ,
+  INDEX `fk_FBAIXA_FFINANCEIRO1` (`idFinanceiro` ASC) ,
+  INDEX `fk_FBAIXA_FCONTA1` (`idConta` ASC) ,
+  INDEX `fk_FBAIXA_FTIPOBAIXA1` (`idTipoBaixa` ASC) ,
+  UNIQUE INDEX `STATUS_UNIQUE` (`Status` ASC) ,
+  CONSTRAINT `fk_FBAIXA_FFINANCEIRO1`
+    FOREIGN KEY (`idFinanceiro` )
+    REFERENCES `financeiro`.`FINANCEIRO` (`idFinanceiro` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_FBAIXA_FCONTA1`
+    FOREIGN KEY (`idConta` )
+    REFERENCES `financeiro`.`CONTA` (`idConta` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_FBAIXA_FTIPOBAIXA1`
+    FOREIGN KEY (`idTipoBaixa` )
+    REFERENCES `financeiro`.`TIPOBAIXA` (`idTipoBaixa` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+CREATE  TABLE IF NOT EXISTS `financeiro`.`REGISTROCONTA` (
+  `idRegistroConta` INT NOT NULL ,
+  `idConta` INT NOT NULL ,
+  `idBaixa` INT NOT NULL ,
+  `Operacao` VARCHAR(1) NOT NULL COMMENT 'C- CRÉDITO |  D- DÉBITO' ,
+  `Descricao` VARCHAR(100) NULL ,
+  `Valor` DECIMAL(12,2) NOT NULL COMMENT 'Tabela de Origem.' ,
+  `SaldoAnterior` DECIMAL(12,2) NULL ,
+  `SaldoAtual` DECIMAL(12,2) NULL ,
+  `Tipo` VARCHAR(2) NULL COMMENT 'DI- Dinheiro\nCC- Cartão de Crédito \nCH- Cheque\nDC- Débito em Conta Corrente\nDD- DDA - Débito Direto Autorizado\nDE- Depósito\nDO- DOC - Documento de Ordem de Crédito\nTE- TED - Transferência Eletrônica Disponíve\nTB- Transferência Bancária' ,
+  `DataPagamento` DATETIME NOT NULL ,
+  `DataCadastro` DATETIME NOT NULL ,
+  `DataAlteracao` DATETIME NOT NULL ,
+  `idUsuarioCadastro` INT NOT NULL ,
+  `idUsuarioAlteracao` INT NOT NULL ,
+  PRIMARY KEY (`idRegistroConta`, `idConta`, `idBaixa`, `idUsuarioCadastro`, `idUsuarioAlteracao`) ,
+  INDEX `fk_FREGISTROCONTA_FCONTA1` (`idConta` ASC) ,
+  INDEX `fk_FREGISTROCONTA_FBAIXA1` (`idBaixa` ASC) ,
+  CONSTRAINT `fk_FREGISTROCONTA_FCONTA1`
+    FOREIGN KEY (`idConta` )
+    REFERENCES `financeiro`.`CONTA` (`idConta` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_FREGISTROCONTA_FBAIXA1`
+    FOREIGN KEY (`idBaixa` )
+    REFERENCES `financeiro`.`BAIXA` (`idBaixa` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+
+
